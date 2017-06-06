@@ -18,7 +18,7 @@ public class OverlayBallsEnd extends OverlayEnd {
 
     MediaPlayer mediaPlayer;
 
-    private static final int NUM_BALLS = 16;
+    private static final int NUM_BALLS = 18;
     //by default tap;
     Strategy strategyFrom_activity = Strategy.TAP;
 
@@ -126,6 +126,8 @@ public class OverlayBallsEnd extends OverlayEnd {
 
             mBalls.add(ball);
         }
+
+
     }
 
     int timeInterval = 2000;
@@ -136,20 +138,24 @@ public class OverlayBallsEnd extends OverlayEnd {
         @Override
         public void run() {
             timeCount++;
-            Ball ball = mBalls.get(0);
+
+            if(!mBalls.isEmpty())
             mBalls.remove(0);
             Log.e("ballSize: ", String.valueOf(mBalls.size()));
+
             if (mBalls.size() == 0)
                 ballsGone_listener.finishedBalls();
-
-            mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
-            mediaPlayer.start();
-
-            if (timeCount < 3)
-                blastHandler.postDelayed(blastRunnable, 700);
             else {
-                timeCount = 0;
+                mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
+                mediaPlayer.start();
+                if (timeCount < 3)
+                    blastHandler.postDelayed(blastRunnable, 700);
+                else {
+                    timeCount = 0;
+                }
             }
+
+            Log.e("balls Size: ", String.valueOf(mBalls.size()));
 
         }
     };
@@ -166,7 +172,7 @@ public class OverlayBallsEnd extends OverlayEnd {
     ///////////////////////// THIS WILL BE CALLED FROM THE ACTIVITY //////////////////////
     public void blastThreeShots() {
         int count = mBalls.size();
-        if (count > 2 && !listeneing) {
+        if (!listeneing) {
             listeneing = true;
             blastHandler.postDelayed(blastRunnable, timeInterval);
             blastHandlerResart.postDelayed(restartRunnable, timeIntervalListener);
