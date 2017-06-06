@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * Created by Probook 440 on 2/19/2017.
@@ -26,6 +27,8 @@ public class SensorDetector implements SensorEventListener {
         accelerometer = manager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
         manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
+
+    int shakeCount = 0;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -50,8 +53,13 @@ public class SensorDetector implements SensorEventListener {
             direction[1] = "UP";
             y = yChange;
         }
-
-        shakeListener.getShakePosition(x, y);
+        shakeCount++;
+        Log.e("shakeCount",String.valueOf(shakeCount));
+        if (shakeCount > 300) {
+            shakeListener.getShakePosition(x, y);
+            shakeListener.getShakeDirection(direction);
+            shakeCount = 0;
+        }
 
     }
 
@@ -62,5 +70,7 @@ public class SensorDetector implements SensorEventListener {
 
     public interface ShakeListener {
         public void getShakePosition(float x, float y);
+
+        public void getShakeDirection(String[] direction);
     }
 }
