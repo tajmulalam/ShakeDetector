@@ -5,8 +5,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class SensorActivity extends Activity implements OverlayBallsEnd.AllBallsGone, SensorDetector.ShakeListener {
+public class SensorActivity extends Activity implements OverlayBallsEnd.AllBallsGone, SensorDetector.ShakeListener, BlowDetector.BlowListener {
     float[] history = new float[2];
     String[] direction = {"NONE", "NONE"};
     private SensorManager manager;
@@ -17,6 +18,7 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
     int choice = -1;
     boolean isShakingChoice = false;
     OverlayBallsEnd view;
+    BlowDetector blowDetector;
 
     //////choice=1-BLOW///choice=2-TAP///choice=3-SHAKE,
     @Override
@@ -24,6 +26,7 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
         super.onCreate(savedInstanceState);
         choice = getIntent().getIntExtra("blowChoice", -1);
         sensorDetector = new SensorDetector(this, this);
+        blowDetector = new BlowDetector(this);
         if (choice != -1)
             turnOverlayBallOn(choice);
     }
@@ -34,6 +37,7 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
             case 1:
                 view = new OverlayBallsEnd(this, 0, OverlayBallsEnd.Strategy.BLOW, this);
                 setContentView(view);
+                blowDetector.startBlowing(true);
                 break;
             case 2:
                 view = new OverlayBallsEnd(this, 0, OverlayBallsEnd.Strategy.TAP, this);
@@ -50,7 +54,9 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
 
     @Override
     public void finishedBalls() {
-
+        blowDetector.startBlowing(false);
+        isShakingChoice = false;
+        Toast.makeText(this, "Finish over", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -66,4 +72,8 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
     }
 
 
+    @Override
+    public void isBlowed(boolean blowed) {
+        view.blastThreeShots();
+    }
 }

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements ShakeListener.OnS
         count++;
         Toast.makeText(this, "Shake count: " + count, Toast.LENGTH_SHORT).show();
         Intent intent=new Intent(MainActivity.this, SensorActivity.class);
-        intent.putExtra("blowChoice",3);
+        intent.putExtra("blowChoice",1);
         startActivity(intent);
 //        showDialog();
     }
