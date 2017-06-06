@@ -1,5 +1,6 @@
 package com.educareappsltd.shakedetector;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -11,7 +12,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SensorActivity extends AppCompatActivity {
+public class SensorActivity extends Activity {
     float[] history = new float[2];
     String[] direction = {"NONE", "NONE"};
     private SensorManager manager;
@@ -22,7 +23,7 @@ public class SensorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        OverlayBallsEnd view = new OverlayBallsEnd(this);
+        OverlayBallsEnd view = new OverlayBallsEnd(this,0);
         setContentView(view);
 
     }

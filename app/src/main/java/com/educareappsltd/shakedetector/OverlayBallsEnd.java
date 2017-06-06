@@ -1,6 +1,7 @@
 package com.educareappsltd.shakedetector;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,12 +19,27 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
 
     MediaPlayer mediaPlayer;
 
-    SensorActivity activity;
     private static final int NUM_BALLS = 16;
+    //by default tap;
+    Strategy strategyFrom_activity=Strategy.TAP;
 
+    public static enum Strategy{
+        BLOW, TAP, SHAKE;
+    }
 
-    //// smilies int res ids array
-    private static int[] BALLS = new int[]{
+    //// animal int res ids array
+    private static int[] ANIMALS = new int[]{
+
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
+            R.drawable.facebook,
             R.drawable.facebook,
             R.drawable.facebook,
             R.drawable.facebook,
@@ -34,114 +50,48 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
             R.drawable.facebook
     };
 
-//    //// animal int res ids array
-//    private static int[] ANIMALS = new int[]{
-//            R.drawable.imag_animal_blue,
-//            R.drawable.imag_animal_green,
-//            R.drawable.imag_animal_orange,
-//            R.drawable.imag_animal_pink,
-//            R.drawable.imag_animal_purpple,
-//            R.drawable.imag_animal_red,
-//            R.drawable.imag_animal_turquesa,
-//            R.drawable.imag_animal_yellow
-//    };
-//
-//
-//    //// bubbles int res ids array
-//    private static int[] BUBBLES = new int[]{
-//            R.drawable.img_bubbler_blue,
-//            R.drawable.img_bubbler_green,
-//            R.drawable.img_bubbler_orange,
-//            R.drawable.img_bubbler_pink,
-//            R.drawable.img_bubbler_purpple,
-//            R.drawable.img_bubbler_red,
-//            R.drawable.img_bubbler_turquesa,
-//            R.drawable.img_bubbler_yellow
-//    };
-//    //// numbers int res ids array
-//    private static int[] NUMBERS = new int[]{
-//            R.drawable.img_rubber_blue,
-//            R.drawable.img_rubber_green,
-//            R.drawable.img_rubber_orange,
-//            R.drawable.img_rubber_pink,
-//            R.drawable.img_rubber_purpple,
-//            R.drawable.img_rubber_red,
-//            R.drawable.img_rubber_turquesa,
-//            R.drawable.img_rubber_yellow
-//    };
-//
-//    //// clouds int res ids array
-//    private static int[] BALLS = new int[]{
-//            R.drawable.img_token_blue_face,
-//            R.drawable.img_token_green_face,
-//            R.drawable.img_token_grey_face,
-//            R.drawable.img_token_orange_face,
-//            R.drawable.img_token_pink_face,
-//            R.drawable.img_token_purple_face,
-//            R.drawable.img_token_red_face,
-//            R.drawable.img_token_yello_face
-//    };
-//
-//    ////2 clouds int res ids array
-//    private static int[] CLOUD = new int[]{
-//            R.drawable.img_token_blue_face,
-//            R.drawable.img_token_green_face,
-//            R.drawable.img_token_grey_face,
-//            R.drawable.img_token_orange_face,
-//            R.drawable.img_token_pink_face,
-//            R.drawable.img_token_purple_face,
-//            R.drawable.img_token_red_face,
-//            R.drawable.img_token_yello_face
-//    };
-//
-//
-//    //// shape int res ids array
-//    private static int[] SHAPE = new int[]{
-//            R.drawable.img_shape_blue,
-//            R.drawable.img_shape_green,
-//            R.drawable.img_shape_orange,
-//            R.drawable.img_shape_pink,
-//            R.drawable.img_shape_purpple,
-//            R.drawable.img_shape_red,
-//            R.drawable.img_shape_turquesa,
-//            R.drawable.img_shape_yellow
-//    };
+
+    //// clouds int res ids array
+    private static int[] BALLS = new int[]{
+
+    };
 
 
     private Random mRandom = new Random();
     private ArrayList<Ball> mBalls = new ArrayList<Ball>();
-    private SensorDetector sensorDetector;
-
-    public OverlayBallsEnd(Context context) {
+    AllBallsGone ballsGone_listener;
+    public OverlayBallsEnd(Context context, int level, Strategy st, AllBallsGone ballsGone_listener) {
         super(context);
-        activity = (SensorActivity) context;
-        sensorDetector = new SensorDetector(activity, this);
-//        switch (level) {
-//            case 0:
-//                BALLS = SMILIES;
-//                break;
-//            case 1:
-//                BALLS = ANIMALS;
-//                break;
-//            case 2:
-//                BALLS = BUBBLES;
-//                break;
-//            case 3:
-//                BALLS = NUMBERS;
-//                break;
-//            case 4:
-//                BALLS = CLOUD;
-//                break;
-//            case 5:
-//                BALLS = SHAPE;
-//                break;
-//
-//        }
+        strategyFrom_activity=st;
+        this.ballsGone_listener=ballsGone_listener;
+       // activity = (TransparentActivity) context;
+        switch (level) {
+            case 0:
+                BALLS = ANIMALS;
+                break;
+            case 1:
+                BALLS = ANIMALS;
+                break;
+            case 2:
+                BALLS = ANIMALS;
+                break;
+            case 3:
+                BALLS = ANIMALS;
+                break;
+            case 4:
+                BALLS = ANIMALS;
+                break;
+            case 5:
+                BALLS = ANIMALS;
+                break;
+        }
     }
+
+    ////////////////////////////////// DRAWING STARTS *******************////////////
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // Update
+        // Update, create, delete
         update();
 
         // Draw
@@ -150,24 +100,20 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
         // Invalidate
         invalidate();
     }
-
+    ///////////////////// THIS IS THE UPDATE ////////////////////////
     protected void update() {
-//        // Remove finished
+        // Remove finished
         for (int i = 0; i < mBalls.size(); i++) {
             Ball ball = mBalls.get(i);
             if (ball.isFinished(getWidth())) {
-                ball.recycle();
-                mBalls.remove(i);
+               // ball.recycle();
+                //mBalls.remove(i);
+                ball.changeDirection();
             }
         }
 
-        // Update
-        for (Ball ball : mBalls) {
-            if (isShaked) {
-                ball.setFromShake(shakeX, shakeY);
-            } else
-                ball.update();
-        }
+        // Update and movement
+        for (Ball ball : mBalls) ball.update();
 
         // Add new
         if (!isFinish() && mBalls.size() < NUM_BALLS) {
@@ -175,9 +121,51 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
             ball.init(mRandom);
             ball.bitmap = BitmapFactory.decodeResource(getResources(), BALLS[mRandom.nextInt(BALLS.length)]);
             ball.offsetX = getWidth() / 2;
-            ball.offsetY = getHeight();
+            ball.offsetY = getHeight()/2;
 
             mBalls.add(ball);
+        }
+    }
+
+    int timeInterval=2000;
+    int timeIntervalListener=2500;
+    int timeCount=0;
+    Handler blastHandler=new Handler();
+    Runnable blastRunnable=new Runnable() {
+        @Override
+        public void run() {
+            timeCount++;
+            Ball ball = mBalls.get(0);
+            mBalls.remove(0);
+
+            if(mBalls.size()==0)
+                ballsGone_listener.finishedBalls();
+
+            mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
+            mediaPlayer.start();
+
+            if(timeCount<3)
+            blastHandler.postDelayed(blastRunnable,700);
+
+        }
+    };
+
+    boolean listeneing=false;
+    Handler blastHandlerResart=new Handler();
+    Runnable restartRunnable=new Runnable() {
+        @Override
+        public void run() {
+            listeneing=false;
+        }
+    };
+
+    ///////////////////////// THIS WILL BE CALLED FROM THE ACTIVITY //////////////////////
+    public void blastThreeShots(){
+        int count = mBalls.size();
+        if(count>2 && !listeneing){
+            listeneing=true;
+            blastHandler.postDelayed(blastRunnable, timeInterval);
+            blastHandlerResart.postDelayed(restartRunnable, timeIntervalListener);
         }
     }
 
@@ -189,46 +177,42 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            float x = event.getRawX();
-            float y = event.getRawY();
+        if(strategyFrom_activity==Strategy.TAP) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                float x = event.getRawX();
+                float y = event.getRawY();
 
-            int index = -1;
-            int count = mBalls.size();
-            for (int i = count - 1; i >= 0; i--) {
-                Ball ball = mBalls.get(i);
-                RectF rect = ball.getRectF();
-                if (rect.contains(x, y)) {
-                    index = i;
-                    break;
+                int index = -1;
+                int count = mBalls.size();
+                for (int i = count - 1; i >= 0; i--) {
+                    Ball ball = mBalls.get(i);
+                    RectF rect = ball.getRectF();
+                    if (rect.contains(x, y)) {
+                        index = i;
+                        break;
+                    }
                 }
-            }
 
-            if (index != -1) {
-                mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
-                mediaPlayer.start();
-                mBalls.remove(index);
-                return true;
-            } else {
-                activity.doneFlyBall();
+                if (index != -1) {
+                    mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
+                    mediaPlayer.start();
+                    mBalls.remove(index);
+
+                    if(mBalls.size()==0)
+                        ballsGone_listener.finishedBalls();
+
+                    return true;
+                } else {
+                    //finish it
+                    // activity.finishActivity();
+                }
             }
         }
         return super.onTouchEvent(event);
     }
 
-    boolean isShaked = false; /// enable on shake bubble flying
-    float shakeX, shakeY;//// shake position x and shake position y
-
     @Override
     public void getShakePosition(float x, float y) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isShaked = true;
-            }
-        }, 1000);
-        shakeX = x;
-        shakeY = y;
 
     }
 
@@ -256,9 +240,14 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
             return x + offsetX < -1 * bitmap.getWidth() || x + offsetX > width;
         }
 
+        void changeDirection(){
+            direction=direction==1?-1:1;
+        }
+
         void init(Random random) {
             x = 0;
             y = 0;
+            //range from 32-128
             k = random.nextInt(MAX_K - MIN_K) + MIN_K;
             direction = random.nextBoolean() ? 1 : -1;
             speed = random.nextInt(MAX_SPEED - MIN_SPEED) + MIN_SPEED;
@@ -270,15 +259,10 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
 
             canvas.drawBitmap(bitmap, x, y, null);
         }
-
+        
         void update() {
             x = x + direction * speed;
             y = (int) (k * Math.log((double) Math.abs(x) + 1));
-        }
-
-        void setFromShake(float shakeX, float shakeY) {
-            x = x + (int) shakeX * speed;
-            y = y + (int) shakeY;
         }
 
         void recycle() {
@@ -294,5 +278,15 @@ public class OverlayBallsEnd extends OverlayEnd implements SensorDetector.ShakeL
             return new RectF(x, y, x + bitmap.getWidth(), y + bitmap.getHeight());
         }
     }
+
+
+    //please which ever activity use this class must implement this interface and send strategy in contructor
+    //when the balls are gone the finishedBalls() will be called automatically
+    //***** call blastThreeShots() when u detect shake or blow;
+
+    public interface AllBallsGone{
+        public void finishedBalls();
+    }
+
 
 }
