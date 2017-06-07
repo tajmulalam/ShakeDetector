@@ -71,7 +71,6 @@ public class SensorActivity extends Activity implements OverlayBallsEnd.AllBalls
 
     }
 
-
     @Override
     public void isBlowed(boolean blowed) {
         view.blastThreeShots();

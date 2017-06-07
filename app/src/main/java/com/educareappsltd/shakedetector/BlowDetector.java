@@ -33,7 +33,7 @@ public class BlowDetector {
                             if (s > 20000) {
                                 System.out.println("minSize /  signal / if (signal > 20000) = " + s);
                             }
-                            if (Math.abs(s) > 20000)   //DETECT VOLUME (IF I BLOW IN THE MIC)
+                            if (Math.abs(s) > 20000 && Math.abs(s) < 22000)   //DETECT VOLUME (IF I BLOW IN THE MIC)
                             {
                                 fooCount++;
                                 blow_value = Math.abs(s);

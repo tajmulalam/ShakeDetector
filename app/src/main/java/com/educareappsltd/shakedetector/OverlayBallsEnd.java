@@ -130,8 +130,9 @@ public class OverlayBallsEnd extends OverlayEnd {
 
     }
 
-    int timeInterval = 2000;
-    int timeIntervalListener = 3000;
+    int timeInterval = 1000;
+    int timeIntervalListener = 2500;
+    int blastInterval=300;
     int timeCount = 0;
     Handler blastHandler = new Handler();
     Runnable blastRunnable = new Runnable() {
@@ -149,7 +150,7 @@ public class OverlayBallsEnd extends OverlayEnd {
                 mediaPlayer = MediaPlayer.create(getContext(), R.raw.sd_faces_pop);
                 mediaPlayer.start();
                 if (timeCount < 3)
-                    blastHandler.postDelayed(blastRunnable, 700);
+                    blastHandler.postDelayed(blastRunnable, blastInterval);
                 else {
                     timeCount = 0;
                 }
