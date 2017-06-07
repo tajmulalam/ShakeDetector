@@ -1,23 +1,16 @@
 package com.educareappsltd.shakedetector;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.ColorInt;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.jrummyapps.android.colorpicker.ColorPickerDialog;
-import com.jrummyapps.android.colorpicker.ColorPickerDialogListener;
 import com.rarepebble.colorpicker.ColorPickerView;
 
 
@@ -55,10 +48,14 @@ public class MainActivity extends AppCompatActivity implements ShakeListener.OnS
     public void onShake() {
         count++;
         Toast.makeText(this, "Shake count: " + count, Toast.LENGTH_SHORT).show();
-        Intent intent=new Intent(MainActivity.this, SensorActivity.class);
-        intent.putExtra("blowChoice",1);
-        startActivity(intent);
+        goPlay();
 //        showDialog();
+    }
+
+    private void goPlay() {
+        Intent intent = new Intent(MainActivity.this, SensorActivity.class);
+        intent.putExtra("blowChoice", 1);
+        startActivity(intent);
     }
 
     public void doneFlyBall() {
@@ -113,5 +110,9 @@ public class MainActivity extends AppCompatActivity implements ShakeListener.OnS
         });
 
         dialog.show();
+    }
+
+    public void play(View view) {
+        goPlay();
     }
 }
